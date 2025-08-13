@@ -1,0 +1,42 @@
+{
+  "name": "@claude-init/test-dashboard",
+  "version": "1.0.0",
+  "description": "Generic test dashboard for any project using Claude Task Management System",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "discover": "node scripts/discover-tests.js",
+    "test": "npm run test:self && npm run test:e2e",
+    "test:self": "echo 'Open http://localhost:8000/tests/dashboard-self-test.html to run self-tests'",
+    "test:e2e": "node tests/dashboard-e2e.test.cjs",
+    "test:claude": "node tests/claude-init-check.js",
+    "check": "npm run test:claude"
+  },
+  "keywords": [
+    "test",
+    "dashboard",
+    "claude",
+    "testing",
+    "playwright",
+    "test-runner"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "playwright": "^1.40.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "dashboard.html",
+    "server.js",
+    "scripts/",
+    "README.md"
+  ]
+}
