@@ -125,20 +125,53 @@ class ClaudeTasksSetup:
         print("🚀 Claude Task Management System Setup")
         print(f"📁 Target directory: {self.target}")
         
-        # Create claude_tasks directory
-        self._create_directory_structure()
+        # Check what already exists
+        claude_tasks_exists = self.claude_tasks_dir.exists()
+        test_dashboard_exists = (self.target / "test-dashboard-module").exists()
+        claude_md_exists = self.claude_md_path.exists()
         
-        # Copy or create files
-        if self.source:
-            self._copy_from_source()
+        print(f"\n📋 Current state:")
+        print(f"   claude_tasks/: {'✅ exists' if claude_tasks_exists else '❌ missing'}")
+        print(f"   test-dashboard-module/: {'✅ exists' if test_dashboard_exists else '❌ missing'}")
+        print(f"   CLAUDE.md: {'✅ exists' if claude_md_exists else '❌ missing'}")
+        
+        # Install claude_tasks if missing or force flag is set
+        if not claude_tasks_exists or self.force:
+            if claude_tasks_exists and self.force:
+                print(f"\n🔄 Reinstalling claude_tasks (--force flag)")
+            else:
+                print(f"\n📦 Installing claude_tasks...")
+            
+            # Create claude_tasks directory
+            self._create_directory_structure()
+            
+            # Copy or create files
+            if self.source:
+                self._copy_from_source()
+            else:
+                self._create_from_templates()
         else:
-            self._create_from_templates()
+            print(f"\n⏭️  Skipping claude_tasks (already exists)")
         
-        # Handle CLAUDE.md
-        self._handle_claude_md()
+        # Handle CLAUDE.md if missing or force flag is set
+        if not claude_md_exists or self.force:
+            if claude_md_exists and self.force:
+                print(f"\n🔄 Updating CLAUDE.md (--force flag)")
+            else:
+                print(f"\n📝 Creating CLAUDE.md...")
+            self._handle_claude_md()
+        else:
+            print(f"\n⏭️  Skipping CLAUDE.md (already exists)")
         
-        # Install test dashboard module
-        self._install_test_dashboard()
+        # Install test dashboard if missing or force flag is set
+        if not test_dashboard_exists or self.force:
+            if test_dashboard_exists and self.force:
+                print(f"\n🔄 Reinstalling test-dashboard-module (--force flag)")
+            else:
+                print(f"\n📊 Installing test-dashboard-module...")
+            self._install_test_dashboard()
+        else:
+            print(f"\n⏭️  Skipping test-dashboard-module (already exists)")
         
         # Add .gitignore entries
         if not self.no_git:
@@ -373,13 +406,7 @@ See `claude_tasks/` for detailed methodology.
     
     def _install_test_dashboard(self):
         """Install test dashboard module."""
-        print("📊 Installing Test Dashboard Module...")
-        
         test_dashboard_dir = self.target / "test-dashboard-module"
-        
-        if test_dashboard_dir.exists() and not self.force:
-            print("⏭️  Test dashboard already exists, skipping")
-            return
         
         # Determine source for test dashboard
         source_dashboard = None
@@ -564,22 +591,44 @@ console.log("To get full test discovery, copy from claude_init repository");
     
     def _print_next_steps(self):
         """Print next steps for the user."""
+        claude_tasks_exists = self.claude_tasks_dir.exists()
+        test_dashboard_exists = (self.target / "test-dashboard-module").exists()
+        claude_md_exists = self.claude_md_path.exists()
+        
         print("\n📚 Next Steps:")
-        print("1. Review claude_tasks/QUICK_REFERENCE.md for workflow")
-        print("2. Read claude_tasks/PRINCIPLES_QUICK_CARD.md for principles")
-        print("3. Add your first task to claude_tasks/active/ACTIVE_TASKS.md")
-        print("4. Customize CLAUDE.md with project-specific information")
-        print("5. Commit the changes: git add . && git commit -m 'Add Claude task management'")
         
-        # Check if test dashboard was installed
-        test_dashboard_dir = self.target / "test-dashboard-module"
-        if test_dashboard_dir.exists():
-            print("\n📊 Test Dashboard:")
-            print(f"6. Start test dashboard: cd test-dashboard-module && npm start")
-            print(f"7. Open http://localhost:8085 to manage tests")
-            print("8. Add project directories in the dashboard to scan multiple projects")
+        step_num = 1
         
-        print("\n🎯 Start coding with: cat claude_tasks/SESSION_STARTER.md")
+        if claude_tasks_exists:
+            print(f"{step_num}. Review claude_tasks/QUICK_REFERENCE.md for workflow")
+            step_num += 1
+            print(f"{step_num}. Read claude_tasks/PRINCIPLES_QUICK_CARD.md for principles")
+            step_num += 1
+            print(f"{step_num}. Add your first task to claude_tasks/active/ACTIVE_TASKS.md")
+            step_num += 1
+        
+        if claude_md_exists:
+            print(f"{step_num}. Customize CLAUDE.md with project-specific information")
+            step_num += 1
+        
+        # Only suggest git commit if something was actually installed
+        if claude_tasks_exists or test_dashboard_exists or claude_md_exists:
+            print(f"{step_num}. Commit the changes: git add . && git commit -m 'Add Claude components'")
+            step_num += 1
+        
+        # Test dashboard instructions
+        if test_dashboard_exists:
+            print(f"\n📊 Test Dashboard:")
+            print(f"{step_num}. Start test dashboard: cd test-dashboard-module && npm start")
+            step_num += 1
+            print(f"{step_num}. Open http://localhost:8085 to manage tests")
+            step_num += 1
+            print(f"{step_num}. Add project directories in the dashboard to scan multiple projects")
+        
+        if claude_tasks_exists:
+            print("\n🎯 Start coding with: cat claude_tasks/SESSION_STARTER.md")
+        elif test_dashboard_exists:
+            print("\n🎯 Manage tests with: cd test-dashboard-module && npm start")
 
 
 def main():
