@@ -370,8 +370,8 @@ See `claude_tasks/` for detailed methodology.
         
         entries_to_add = [
             "\n# Claude task management",
-            "claude_tasks/finished/*.md",
             "*.backup",
+            "CLAUDE.md.backup",
         ]
         
         if gitignore_path.exists():

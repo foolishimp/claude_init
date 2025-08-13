@@ -39,7 +39,7 @@ your-project/
     ├── TASK_TEMPLATE.md         # Template for tasks
     ├── active/
     │   └── ACTIVE_TASKS.md      # Current tasks
-    └── finished/                 # Completed tasks archive
+    └── finished/                 # Completed tasks archive (tracked in git)
 ```
 
 ## 🎯 Core Principles
