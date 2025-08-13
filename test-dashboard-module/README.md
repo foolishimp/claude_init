@@ -133,7 +133,7 @@ The dashboard recognizes tests matching these patterns:
 ### Port Configuration
 
 ```bash
-PORT=3000 npm start  # Use custom port
+PORT=3000 npm start  # Use custom port (default: 8085)
 ```
 
 ### Project Directories

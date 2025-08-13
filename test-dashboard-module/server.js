@@ -9,7 +9,7 @@ const { promisify } = require('util');
 
 const execAsync = promisify(exec);
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8085;
 
 // Middleware
 app.use(cors());
@@ -68,7 +68,48 @@ app.post('/api/run-test', async (req, res) => {
             return res.status(400).json({ error: 'Path parameter required' });
         }
         
-        const fullPath = path.join(process.cwd(), testPath);
+        // Determine the working directory and full path
+        let fullPath, workingDir;
+        
+        if (path.isAbsolute(testPath)) {
+            // If path is absolute, use it directly
+            fullPath = testPath;
+            workingDir = path.dirname(fullPath);
+        } else {
+            // For relative paths, check if they exist from current directory
+            const relativePath = path.join(process.cwd(), testPath);
+            
+            try {
+                await fs.access(relativePath);
+                fullPath = relativePath;
+                workingDir = process.cwd();
+            } catch {
+                // If not found in current directory, it might be from a configured project directory
+                // Try to find the project directory that contains this test
+                const projectDirs = process.env.PROJECT_DIRS ? process.env.PROJECT_DIRS.split(':') : [];
+                let found = false;
+                
+                for (const projectDir of projectDirs) {
+                    const candidatePath = path.join(projectDir, testPath);
+                    try {
+                        await fs.access(candidatePath);
+                        fullPath = candidatePath;
+                        workingDir = projectDir;
+                        found = true;
+                        break;
+                    } catch {
+                        continue;
+                    }
+                }
+                
+                if (!found) {
+                    // Fall back to original behavior
+                    fullPath = relativePath;
+                    workingDir = process.cwd();
+                }
+            }
+        }
+        
         const ext = path.extname(fullPath);
         let command;
         
@@ -95,25 +136,72 @@ app.post('/api/run-test', async (req, res) => {
                 command = `node "${fullPath}"`;
         }
         
+        console.log(`Running test: ${command} in working directory: ${workingDir}`);
+        
         const { stdout, stderr } = await execAsync(command, { 
-            cwd: process.cwd(),
+            cwd: workingDir,
             timeout: 30000 // 30 second timeout
         });
         
         res.json({ 
             output: stdout || stderr,
-            success: !stderr || stderr.length === 0
+            success: !stderr || stderr.length === 0,
+            workingDir: workingDir,
+            fullPath: fullPath
         });
     } catch (error) {
         console.error('Error running test:', error);
         res.status(500).json({ 
             error: error.message,
-            output: error.stdout || error.stderr
+            output: error.stdout || error.stderr,
+            workingDir: workingDir || 'unknown',
+            fullPath: fullPath || testPath
         });
     }
 });
 
-// API: Refresh test discovery
+// API: Discover tests with custom directories
+app.post('/api/discover-tests', async (req, res) => {
+    try {
+        const { directories = [] } = req.body;
+        const discoveryScript = path.join(__dirname, 'scripts', 'discover-tests.js');
+        
+        // Build command with directories
+        let command = `node "${discoveryScript}"`;
+        if (directories.length > 0) {
+            // Validate and sanitize directories
+            const safeDirs = directories
+                .filter(dir => typeof dir === 'string' && dir.trim())
+                .map(dir => dir.trim().replace(/"/g, '\\"')); // Escape quotes
+            
+            if (safeDirs.length > 0) {
+                command += ' ' + safeDirs.map(d => `"${d}"`).join(' ');
+            }
+        }
+        
+        console.log('Running discovery command:', command);
+        const { stdout, stderr } = await execAsync(command, { 
+            cwd: process.cwd(),
+            timeout: 60000 // 60 second timeout for discovery
+        });
+        
+        res.json({ 
+            success: true,
+            message: 'Test discovery completed',
+            output: stdout,
+            error: stderr
+        });
+    } catch (error) {
+        console.error('Error during test discovery:', error);
+        res.status(500).json({ 
+            success: false,
+            error: error.message,
+            output: error.stdout || error.stderr || ''
+        });
+    }
+});
+
+// API: Refresh test discovery (legacy endpoint)
 app.post('/api/refresh', async (req, res) => {
     try {
         const discoveryScript = path.join(__dirname, 'scripts', 'discover-tests.js');

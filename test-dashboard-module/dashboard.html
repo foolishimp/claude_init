@@ -94,6 +94,69 @@
             align-items: center;
         }
 
+        /* Directory Selection Bar */
+        .directory-bar {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+        }
+
+        .directory-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .selected-directories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .no-directories {
+            color: rgba(255, 255, 255, 0.5);
+            font-style: italic;
+            font-size: 0.85em;
+        }
+
+        .directory-tag {
+            background: rgba(102, 126, 234, 0.2);
+            color: rgba(255, 255, 255, 0.9);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border: 1px solid rgba(102, 126, 234, 0.4);
+        }
+
+        .directory-tag .remove-dir {
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: bold;
+            font-size: 0.9em;
+            padding: 0 2px;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .directory-tag .remove-dir:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .directory-path {
+            font-family: 'Courier New', monospace;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
         /* Filter Bar */
         .filter-bar {
             background: rgba(0, 0, 0, 0.3);
@@ -728,6 +791,22 @@
         </div>
     </div>
 
+    <!-- Directory Selection Bar -->
+    <div class="directory-bar">
+        <div class="directory-controls">
+            <span class="filter-label">📁 Project Directories:</span>
+            <button class="btn btn-secondary" onclick="addDirectory()">
+                ➕ Add Directory
+            </button>
+            <button class="btn btn-secondary" onclick="clearDirectories()">
+                🗑️ Clear All
+            </button>
+        </div>
+        <div class="selected-directories" id="selected-directories">
+            <div class="no-directories">No directories selected - scanning current directory</div>
+        </div>
+    </div>
+
     <!-- Filter Bar -->
     <div class="filter-bar">
         <span class="filter-label">Filter:</span>
@@ -803,6 +882,7 @@
         let selectedTests = new Set();
         let isRunning = false;
         let expandedCategories = new Set();
+        let selectedDirectories = new Set();
 
         async function loadTests() {
             try {
@@ -1023,19 +1103,7 @@
         }
 
         async function discoverTests() {
-            log('Running test discovery...', 'info');
-            try {
-                const response = await fetch('/api/refresh', { method: 'POST' });
-                const result = await response.json();
-                if (response.ok) {
-                    log('Test discovery completed', 'success');
-                    await loadTests();
-                } else {
-                    log(`Discovery failed: ${result.error}`, 'error');
-                }
-            } catch (error) {
-                log(`Discovery error: ${error.message}`, 'error');
-            }
+            return discoverTestsWithDirectories();
         }
 
         async function runSelectedTests() {
@@ -1195,6 +1263,89 @@
             return div.innerHTML;
         }
 
+        // Directory Management Functions
+        function loadSelectedDirectories() {
+            const saved = localStorage.getItem('selectedDirectories');
+            if (saved) {
+                selectedDirectories = new Set(JSON.parse(saved));
+                updateDirectoryDisplay();
+            }
+        }
+
+        function saveSelectedDirectories() {
+            localStorage.setItem('selectedDirectories', JSON.stringify([...selectedDirectories]));
+        }
+
+        function addDirectory() {
+            // Use prompt for now, could be enhanced with a proper file picker
+            const directory = prompt('Enter directory path (absolute or relative):');
+            if (directory && directory.trim()) {
+                const cleanPath = directory.trim();
+                selectedDirectories.add(cleanPath);
+                saveSelectedDirectories();
+                updateDirectoryDisplay();
+                log(`Added directory: ${cleanPath}`, 'info');
+            }
+        }
+
+        function removeDirectory(directory) {
+            selectedDirectories.delete(directory);
+            saveSelectedDirectories();
+            updateDirectoryDisplay();
+            log(`Removed directory: ${directory}`, 'info');
+        }
+
+        function clearDirectories() {
+            if (selectedDirectories.size > 0 && confirm('Clear all selected directories?')) {
+                selectedDirectories.clear();
+                saveSelectedDirectories();
+                updateDirectoryDisplay();
+                log('Cleared all directories', 'info');
+            }
+        }
+
+        function updateDirectoryDisplay() {
+            const container = document.getElementById('selected-directories');
+            
+            if (selectedDirectories.size === 0) {
+                container.innerHTML = '<div class="no-directories">No directories selected - scanning current directory</div>';
+                return;
+            }
+
+            const directoryTags = [...selectedDirectories].map(dir => `
+                <div class="directory-tag">
+                    <span class="directory-path" title="${dir}">${dir}</span>
+                    <span class="remove-dir" onclick="removeDirectory('${dir}')" title="Remove directory">×</span>
+                </div>
+            `).join('');
+
+            container.innerHTML = directoryTags;
+        }
+
+        // Modified discover tests function to use selected directories
+        async function discoverTestsWithDirectories() {
+            try {
+                log('Discovering tests...', 'info');
+                const directories = [...selectedDirectories];
+                
+                const response = await fetch('/api/discover-tests', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ directories })
+                });
+                
+                if (!response.ok) throw new Error('Failed to discover tests');
+                
+                await loadTests();
+                log('Test discovery completed', 'success');
+            } catch (error) {
+                console.error('Error discovering tests:', error);
+                log(`Discovery failed: ${error.message}`, 'error');
+            }
+        }
+
         // Setup filters
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -1221,7 +1372,8 @@
         // Initial log message
         log('Dashboard initialized. Ready to run tests.', 'info');
 
-        // Load tests on page load
+        // Initialize directories and load tests on page load
+        loadSelectedDirectories();
         loadTests();
     </script>
 </body>

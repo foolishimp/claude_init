@@ -137,6 +137,9 @@ class ClaudeTasksSetup:
         # Handle CLAUDE.md
         self._handle_claude_md()
         
+        # Install test dashboard module
+        self._install_test_dashboard()
+        
         # Add .gitignore entries
         if not self.no_git:
             self._update_gitignore()
@@ -368,6 +371,162 @@ Follow TDD: RED → GREEN → REFACTOR
 See `claude_tasks/` for detailed methodology.
 """
     
+    def _install_test_dashboard(self):
+        """Install test dashboard module."""
+        print("📊 Installing Test Dashboard Module...")
+        
+        test_dashboard_dir = self.target / "test-dashboard-module"
+        
+        if test_dashboard_dir.exists() and not self.force:
+            print("⏭️  Test dashboard already exists, skipping")
+            return
+        
+        # Determine source for test dashboard
+        source_dashboard = None
+        if self.source:
+            if self.source.startswith(("http://", "https://", "git@")):
+                # For git sources, we'd need to clone again - for now, use embedded files
+                pass
+            else:
+                source_path = Path(self.source)
+                potential_dashboard = source_path / "test-dashboard-module"
+                if potential_dashboard.exists():
+                    source_dashboard = potential_dashboard
+        
+        if source_dashboard:
+            # Copy existing dashboard
+            self._copy_test_dashboard(source_dashboard, test_dashboard_dir)
+        else:
+            # Create minimal dashboard from embedded template
+            self._create_embedded_dashboard(test_dashboard_dir)
+        
+        # Install Node.js dependencies
+        self._install_node_dependencies(test_dashboard_dir)
+    
+    def _copy_test_dashboard(self, source_dir: Path, target_dir: Path):
+        """Copy test dashboard from source."""
+        if target_dir.exists():
+            shutil.rmtree(target_dir)
+        
+        # Copy entire directory
+        shutil.copytree(source_dir, target_dir)
+        
+        # Remove node_modules and package-lock.json if they exist
+        for item in ["node_modules", "package-lock.json"]:
+            item_path = target_dir / item
+            if item_path.exists():
+                if item_path.is_dir():
+                    shutil.rmtree(item_path)
+                else:
+                    item_path.unlink()
+        
+        print(f"📊 Copied test dashboard to: {target_dir.relative_to(self.target)}")
+    
+    def _create_embedded_dashboard(self, target_dir: Path):
+        """Create basic test dashboard from embedded template."""
+        target_dir.mkdir(exist_ok=True)
+        
+        # Create package.json
+        package_json = {
+            "name": f"{self.target.name}-test-dashboard",
+            "version": "1.0.0",
+            "description": "Test dashboard for project test management",
+            "main": "server.js",
+            "scripts": {
+                "start": "node server.js",
+                "discover": "node scripts/discover-tests.js"
+            },
+            "dependencies": {
+                "express": "^4.18.2",
+                "cors": "^2.8.5"
+            }
+        }
+        
+        with open(target_dir / "package.json", "w") as f:
+            json.dump(package_json, f, indent=2)
+        
+        # Create basic server.js (minimal version)
+        server_js = '''#!/usr/bin/env node
+
+const express = require('express');
+const cors = require('cors');
+const fs = require('fs').promises;
+const path = require('path');
+
+const app = express();
+const PORT = process.env.PORT || 8085;
+
+app.use(cors());
+app.use(express.json());
+app.use(express.static(__dirname));
+
+app.get('/', (req, res) => {
+    res.send(`
+        <h1>Test Dashboard</h1>
+        <p>Basic test dashboard installed with Claude Task Management System</p>
+        <p>To enhance this dashboard:</p>
+        <ol>
+            <li>Run: <code>npm install</code></li>
+            <li>Copy full dashboard from claude_init repository</li>
+            <li>Run: <code>npm start</code></li>
+        </ol>
+    `);
+});
+
+app.listen(PORT, () => {
+    console.log(`Test Dashboard running on http://localhost:${PORT}`);
+});
+'''
+        
+        (target_dir / "server.js").write_text(server_js)
+        
+        # Create scripts directory and basic discover script
+        scripts_dir = target_dir / "scripts"
+        scripts_dir.mkdir(exist_ok=True)
+        
+        discover_script = '''#!/usr/bin/env node
+
+console.log("Basic test discovery script");
+console.log("To get full test discovery, copy from claude_init repository");
+'''
+        
+        (scripts_dir / "discover-tests.js").write_text(discover_script)
+        
+        print(f"📊 Created basic test dashboard at: {target_dir.relative_to(self.target)}")
+        print("   For full functionality, copy complete dashboard from claude_init")
+    
+    def _install_node_dependencies(self, dashboard_dir: Path):
+        """Install Node.js dependencies for the test dashboard."""
+        package_json = dashboard_dir / "package.json"
+        if not package_json.exists():
+            print("⚠️  No package.json found, skipping npm install")
+            return
+        
+        try:
+            print("📦 Installing Node.js dependencies...")
+            result = subprocess.run(
+                ["npm", "install"],
+                cwd=dashboard_dir,
+                capture_output=True,
+                text=True,
+                timeout=120  # 2 minute timeout
+            )
+            
+            if result.returncode == 0:
+                print("✅ Node.js dependencies installed successfully")
+            else:
+                print(f"⚠️  npm install completed with warnings")
+                if result.stderr:
+                    print(f"   stderr: {result.stderr[:200]}...")
+                    
+        except subprocess.TimeoutExpired:
+            print("⚠️  npm install timed out, but dashboard was created")
+        except FileNotFoundError:
+            print("⚠️  npm not found - install Node.js to use test dashboard")
+        except Exception as e:
+            print(f"⚠️  Error installing dependencies: {e}")
+            print("   You can run 'npm install' manually in the test-dashboard-module directory")
+
     def _update_gitignore(self):
         """Add appropriate .gitignore entries."""
         gitignore_path = self.target / ".gitignore"
@@ -376,6 +535,10 @@ See `claude_tasks/` for detailed methodology.
             "\n# Claude task management",
             "*.backup",
             "CLAUDE.md.backup",
+            "\n# Test Dashboard Module",
+            "test-dashboard-module/node_modules/",
+            "test-dashboard-module/package-lock.json",
+            "test-dashboard-module/test-registry.json",
         ]
         
         if gitignore_path.exists():
@@ -407,6 +570,15 @@ See `claude_tasks/` for detailed methodology.
         print("3. Add your first task to claude_tasks/active/ACTIVE_TASKS.md")
         print("4. Customize CLAUDE.md with project-specific information")
         print("5. Commit the changes: git add . && git commit -m 'Add Claude task management'")
+        
+        # Check if test dashboard was installed
+        test_dashboard_dir = self.target / "test-dashboard-module"
+        if test_dashboard_dir.exists():
+            print("\n📊 Test Dashboard:")
+            print(f"6. Start test dashboard: cd test-dashboard-module && npm start")
+            print(f"7. Open http://localhost:8085 to manage tests")
+            print("8. Add project directories in the dashboard to scan multiple projects")
+        
         print("\n🎯 Start coding with: cat claude_tasks/SESSION_STARTER.md")
 
 
