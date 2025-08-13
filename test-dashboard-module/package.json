@@ -2,8 +2,7 @@
   "name": "@claude-init/test-dashboard",
   "version": "1.0.0",
   "description": "Generic test dashboard for any project using Claude Task Management System",
-  "main": "index.js",
-  "type": "module",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "discover": "node scripts/discover-tests.js",

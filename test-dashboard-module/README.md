@@ -1,15 +1,18 @@
 # Test Dashboard Module
 
-A generic, project-agnostic test dashboard for any project using the Claude Task Management System.
+A generic, project-agnostic test dashboard for any project. Features automatic test discovery, visual management, and test execution with quality-of-life improvements.
 
 ## Features
 
-- 🔍 **Automatic Test Discovery**: Finds all test files across your project
-- 📊 **Visual Dashboard**: Beautiful UI to browse and manage tests
-- 🏃 **Test Execution**: Run tests directly from the dashboard
-- 🔄 **Real-time Updates**: Refresh discovery to find new tests
+- 🔍 **Automatic Test Discovery**: Finds all test files across one or multiple projects
+- ✅ **Test Selection**: Checkbox-based selection with "Select All" per category
+- 📊 **Visual Dashboard**: Beautiful UI with filtering, search, and categorization
+- 🏃 **Test Execution**: Run selected tests or individual tests
+- 🔄 **Real-time Updates**: Refresh registry and re-discover tests on demand
+- 📁 **Multi-Project Support**: Scan multiple project directories simultaneously
 - 🎯 **Multi-language Support**: Works with JavaScript, TypeScript, Python, and more
-- ✅ **Claude Integration**: Checks if Claude Task Management is initialized
+- 📝 **Output Panel**: Real-time test execution output with color-coded results
+- ✨ **Claude Integration**: Checks if Claude Task Management is initialized
 
 ## Installation
 
@@ -42,17 +45,55 @@ npm start
 ### Starting the Dashboard
 
 ```bash
+# Default port 8000
 npm start
-# Dashboard available at http://localhost:8000
+
+# Custom port
+PORT=3000 npm start
+
+# With specific project directories
+PROJECT_DIRS="/project1:/project2" npm start
 ```
 
 ### Discovering Tests
 
-The dashboard automatically discovers tests on first run. To refresh:
+The dashboard automatically discovers tests on first run. 
 
+#### From Current Directory (Default)
 ```bash
 npm run discover
 ```
+
+#### From Specific Project
+```bash
+node scripts/discover-tests.js /path/to/project
+```
+
+#### From Multiple Projects
+```bash
+node scripts/discover-tests.js /project1 /project2 /project3
+```
+
+#### With Custom Output Directory
+```bash
+node scripts/discover-tests.js -o ./dashboard /path/to/project
+```
+
+### Dashboard Features
+
+1. **Test Selection**
+   - Click checkboxes to select individual tests
+   - Use "Select All" checkbox in category header
+   - Use top "Select All" / "Deselect All" buttons
+
+2. **Running Tests**
+   - Click "Run Selected Tests" to execute checked tests
+   - Click on test name to view content and run individually
+   - View output in real-time output panel
+
+3. **Refreshing**
+   - "Refresh Registry" - Reload the test list from registry
+   - "Re-discover Tests" - Scan projects for new/removed tests
 
 ### Running Tests
 
@@ -87,6 +128,34 @@ The dashboard recognizes tests matching these patterns:
 - `.html` - Browser-based tests
 - More can be added in `scripts/discover-tests.js`
 
+## Configuration
+
+### Port Configuration
+
+```bash
+PORT=3000 npm start  # Use custom port
+```
+
+### Project Directories
+
+When the dashboard module is located outside your project (e.g., as a sibling directory), you can specify which projects to scan:
+
+```bash
+# Environment variable (colon-separated)
+PROJECT_DIRS="/path/to/project1:/path/to/project2" npm start
+
+# Or use discovery script directly
+node scripts/discover-tests.js ../my-project ../another-project
+```
+
+### Discovery Configuration
+
+Edit `scripts/discover-tests.js` to customize:
+- Test patterns
+- Ignored directories
+- File extensions
+- Output format
+
 ## API Endpoints
 
 The dashboard server provides these endpoints:
@@ -111,22 +180,6 @@ test-dashboard-module/
     ├── dashboard-e2e.test.cjs    # Playwright E2E tests
     └── claude-init-check.js      # Claude setup verification
 ```
-
-## Configuration
-
-### Port Configuration
-
-```bash
-PORT=3000 npm start  # Use custom port
-```
-
-### Discovery Configuration
-
-Edit `scripts/discover-tests.js` to customize:
-- Test patterns
-- Ignored directories
-- File extensions
-- Output format
 
 ## Integration with Projects
 
@@ -153,25 +206,49 @@ discover:
     cd test-dashboard-module && npm run discover
 ```
 
-### For Any Project
+### For Multiple Projects
 
-The dashboard works with any project structure. Just ensure:
-1. Test files follow naming conventions
-2. The dashboard module is in your project
-3. Node.js is installed for running the server
+If the dashboard is installed as a sibling to multiple projects:
+
+```bash
+# Directory structure:
+# /workspace/
+#   ├── test-dashboard-module/
+#   ├── project-a/
+#   ├── project-b/
+#   └── project-c/
+
+# From test-dashboard-module directory:
+node scripts/discover-tests.js ../project-a ../project-b ../project-c
+
+# Start dashboard
+npm start
+```
 
 ## Troubleshooting
 
 ### Tests Not Found
 
 1. Check test file naming matches patterns
-2. Run `npm run discover` to refresh
-3. Check `test-registry.json` was created
-4. Verify paths in the registry
+2. Verify project directories are correct
+3. Run `npm run discover` to refresh
+4. Check `test-registry.json` was created
+5. Verify paths in the registry
+
+### Dashboard Can't Find Project Tests
+
+If the dashboard is outside your project:
+```bash
+# Explicitly specify project directory
+node scripts/discover-tests.js /absolute/path/to/project
+
+# Or use relative path
+node scripts/discover-tests.js ../my-project
+```
 
 ### Server Won't Start
 
-1. Check port 8000 is available
+1. Check port is available (default 8000)
 2. Ensure Node.js is installed
 3. Run `npm install` to get dependencies
 4. Check for error messages in console
@@ -181,6 +258,7 @@ The dashboard works with any project structure. Just ensure:
 1. Ensure test runners are installed (pytest, jest, etc.)
 2. Check file permissions
 3. Verify test commands in `server.js`
+4. Tests are run from the dashboard's working directory
 
 ## Contributing
 

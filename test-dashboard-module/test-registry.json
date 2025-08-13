@@ -1,0 +1,11 @@
+{
+  "tests": [
+    {
+      "file": "dashboard-e2e.test.cjs",
+      "relativePath": "tests/dashboard-e2e.test.cjs",
+      "directory": "tests",
+      "fullPath": "/Users/jim/src/apps/psychicblob/claude_init/test-dashboard-module/tests/dashboard-e2e.test.cjs",
+      "projectRoot": "/Users/jim/src/apps/psychicblob/claude_init/test-dashboard-module"
+    }
+  ]
+}

@@ -117,7 +117,19 @@ app.post('/api/run-test', async (req, res) => {
 app.post('/api/refresh', async (req, res) => {
     try {
         const discoveryScript = path.join(__dirname, 'scripts', 'discover-tests.js');
-        const { stdout } = await execAsync(`node "${discoveryScript}"`, {
+        
+        // Get project directories from environment or request
+        const projectDirs = process.env.PROJECT_DIRS ? 
+            process.env.PROJECT_DIRS.split(':') : 
+            req.body.projectDirs || [];
+        
+        // Build command
+        let command = `node "${discoveryScript}"`;
+        if (projectDirs.length > 0) {
+            command += ' ' + projectDirs.map(d => `"${d}"`).join(' ');
+        }
+        
+        const { stdout } = await execAsync(command, {
             cwd: process.cwd()
         });
         

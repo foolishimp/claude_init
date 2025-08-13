@@ -13,93 +13,119 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            background: #1a1a2e;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
+        /* Header Section */
         header {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
         }
 
         h1 {
-            color: #333;
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            color: white;
+            font-size: 2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .subtitle {
-            color: #666;
-            font-size: 1.1em;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9em;
         }
 
         .stats {
             display: flex;
             gap: 20px;
-            margin-top: 20px;
         }
 
         .stat {
-            background: #f7f7f7;
-            padding: 15px 20px;
-            border-radius: 8px;
-            flex: 1;
+            text-align: center;
         }
 
         .stat-label {
-            color: #888;
-            font-size: 0.9em;
-            margin-bottom: 5px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.75em;
+            text-transform: uppercase;
+            margin-bottom: 2px;
         }
 
         .stat-value {
-            font-size: 1.8em;
+            font-size: 1.5em;
             font-weight: bold;
-            color: #667eea;
+            color: white;
         }
 
-        .filters {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        /* Controls Bar */
+        .controls-bar {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
 
-        .filter-group {
+        .controls-left {
             display: flex;
             gap: 10px;
-            flex-wrap: wrap;
             align-items: center;
+        }
+
+        .controls-right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-shrink: 0;
         }
 
         .filter-label {
             font-weight: 600;
-            color: #555;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9em;
         }
 
         .filter-btn {
-            padding: 8px 16px;
-            border: 2px solid #e0e0e0;
-            background: white;
-            border-radius: 20px;
+            padding: 6px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
             cursor: pointer;
             transition: all 0.3s;
-            font-size: 0.9em;
+            font-size: 0.85em;
         }
 
         .filter-btn:hover {
             border-color: #667eea;
-            background: #f8f9ff;
+            background: rgba(102, 126, 234, 0.2);
+            color: white;
         }
 
         .filter-btn.active {
@@ -114,112 +140,226 @@
         }
 
         .search-box input {
-            padding: 10px 15px 10px 40px;
-            border: 2px solid #e0e0e0;
-            border-radius: 25px;
-            width: 300px;
-            font-size: 0.95em;
-            transition: border-color 0.3s;
+            padding: 6px 10px 6px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 15px;
+            width: 250px;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .search-box input:focus {
             outline: none;
             border-color: #667eea;
+            background: rgba(255, 255, 255, 0.15);
         }
 
         .search-icon {
             position: absolute;
-            left: 15px;
+            left: 10px;
             top: 50%;
             transform: translateY(-50%);
-            color: #888;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
         }
 
-        .test-grid {
-            display: grid;
-            gap: 20px;
+        /* Main Content Area */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            background: #0f0f1e;
+        }
+
+        /* Sidebar with Tests */
+        .sidebar {
+            width: 40%;
+            min-width: 350px;
+            max-width: 600px;
+            background: rgba(0, 0, 0, 0.3);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .quick-btn {
+            padding: 4px 8px;
+            font-size: 0.75em;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* Test List Container */
+        .test-list-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
         }
 
         .test-category {
-            background: white;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-bottom: 10px;
             overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .test-category:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
 
         .category-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px;
+            padding: 12px 15px;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-header:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b399f 100%);
+        }
+
+        .category-info {
+            flex: 1;
+        }
+
+        .category-title {
+            font-size: 0.95em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .category-count {
+            background: rgba(255,255,255,0.2);
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-size: 0.75em;
+        }
+
+        .category-path {
+            font-size: 0.75em;
+            opacity: 0.8;
+            margin-top: 2px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .category-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .category-controls input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .select-all-label {
+            color: white;
+            font-size: 0.8em;
             cursor: pointer;
             user-select: none;
         }
 
-        .category-title {
-            font-size: 1.3em;
-            margin-bottom: 8px;
+        .test-list {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .test-list.expanded {
+            max-height: 1000px;
+        }
+
+        .test-item {
+            padding: 8px 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .category-count {
-            background: rgba(255,255,255,0.2);
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.8em;
-        }
-
-        .category-path {
-            font-size: 0.85em;
-            opacity: 0.9;
-            font-family: 'Courier New', monospace;
-        }
-
-        .test-list {
-            padding: 20px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .test-list.collapsed {
-            display: none;
-        }
-
-        .test-item {
-            padding: 12px;
-            margin-bottom: 10px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid transparent;
+        .test-item:last-child {
+            border-bottom: none;
         }
 
         .test-item:hover {
-            background: #e8eaf6;
-            border-color: #667eea;
-            transform: translateX(5px);
+            background: rgba(102, 126, 234, 0.2);
+            padding-left: 20px;
+        }
+
+        .test-item input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .test-info {
+            flex: 1;
+            min-width: 0;
         }
 
         .test-name {
-            color: #333;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.85em;
             font-weight: 500;
-            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .test-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 2px;
         }
 
         .test-type {
             display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            margin-right: 10px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.7em;
             font-weight: 600;
         }
 
@@ -229,40 +369,163 @@
         .type-nodejs { background: #e8f5e9; color: #388e3c; }
         .type-python { background: #fff9c4; color: #f9a825; }
 
-        .test-meta {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            color: #666;
-            font-size: 0.85em;
-            margin-top: 5px;
+        .test-path {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.7em;
+            font-family: 'Courier New', monospace;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
+        /* Output Panel */
+        .output-panel {
+            flex: 1;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .output-header {
+            padding: 15px 20px;
+            background: #2d2d30;
+            border-bottom: 1px solid #464647;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .output-title {
+            color: #cccccc;
+            font-size: 0.95em;
+        }
+
+        .clear-output {
+            padding: 4px 8px;
+            font-size: 0.75em;
+            background: #3c3c3c;
+            color: #cccccc;
+            border: 1px solid #464647;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .clear-output:hover {
+            background: #484848;
+        }
+
+        .output-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px 20px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85em;
+            line-height: 1.6;
+        }
+
+        .output-line {
+            padding: 2px 0;
+            border-left: 3px solid transparent;
+            padding-left: 10px;
+            margin-bottom: 1px;
+            word-wrap: break-word;
+        }
+
+        .output-line.info {
+            border-left-color: #2196f3;
+            color: #90caf9;
+        }
+
+        .output-line.success {
+            border-left-color: #4caf50;
+            color: #81c784;
+        }
+
+        .output-line.error {
+            border-left-color: #f44336;
+            color: #ef5350;
+        }
+
+        .output-line.warning {
+            border-left-color: #ff9800;
+            color: #ffb74d;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Loading and Error States */
         .loading {
             text-align: center;
             padding: 50px;
-            color: white;
-            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.1em;
         }
 
         .error {
-            background: #ffebee;
-            color: #c62828;
+            background: rgba(244, 67, 54, 0.1);
+            color: #ef5350;
             padding: 20px;
+            margin: 20px;
             border-radius: 8px;
-            margin: 20px 0;
-            border-left: 4px solid #c62828;
+            border-left: 4px solid #ef5350;
         }
 
         .empty-state {
             text-align: center;
             padding: 60px;
-            color: #999;
+            color: rgba(255, 255, 255, 0.4);
         }
 
         .empty-state-icon {
-            font-size: 4em;
-            margin-bottom: 20px;
+            font-size: 3em;
+            margin-bottom: 15px;
             opacity: 0.3;
         }
 
@@ -305,7 +568,7 @@
         }
 
         .modal-title {
-            font-size: 1.3em;
+            font-size: 1.2em;
             color: #333;
         }
 
@@ -352,33 +615,6 @@
             justify-content: flex-end;
         }
 
-        .btn {
-            padding: 10px 20px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-size: 0.95em;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #5a67d8;
-        }
-
-        .btn-secondary {
-            background: #e0e0e0;
-            color: #333;
-        }
-
-        .btn-secondary:hover {
-            background: #d0d0d0;
-        }
-
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -396,68 +632,150 @@
         }
 
         /* Scrollbar Styling */
-        .test-list::-webkit-scrollbar {
+        .test-list-container::-webkit-scrollbar,
+        .output-content::-webkit-scrollbar {
             width: 8px;
         }
 
-        .test-list::-webkit-scrollbar-track {
-            background: #f1f1f1;
+        .test-list-container::-webkit-scrollbar-track,
+        .output-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .test-list-container::-webkit-scrollbar-thumb,
+        .output-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 4px;
         }
 
-        .test-list::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 4px;
+        .test-list-container::-webkit-scrollbar-thumb:hover,
+        .output-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
 
-        .test-list::-webkit-scrollbar-thumb:hover {
-            background: #555;
+        .loading-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(103, 126, 234, 0.3);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Expand/Collapse Icon */
+        .expand-icon {
+            transition: transform 0.3s;
+            margin-right: 5px;
+        }
+
+        .category-header.collapsed .expand-icon {
+            transform: rotate(-90deg);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>📊 Test Dashboard</h1>
-            <div class="subtitle">Project Test Suite Overview</div>
+    <!-- Header -->
+    <header>
+        <div class="header-top">
+            <div>
+                <h1>📊 Test Dashboard</h1>
+                <div class="subtitle">Project Test Suite Management</div>
+            </div>
             <div class="stats">
                 <div class="stat">
                     <div class="stat-label">Total Tests</div>
                     <div class="stat-value" id="total-tests">0</div>
                 </div>
                 <div class="stat">
+                    <div class="stat-label">Selected</div>
+                    <div class="stat-value" id="selected-tests" style="color: #4caf50;">0</div>
+                </div>
+                <div class="stat">
                     <div class="stat-label">Categories</div>
                     <div class="stat-value" id="total-categories">0</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-label">Test Types</div>
+                    <div class="stat-label">Types</div>
                     <div class="stat-value" id="test-types">0</div>
                 </div>
             </div>
-        </header>
+        </div>
+    </header>
 
-        <div class="filters">
-            <div class="filter-group">
-                <span class="filter-label">Filter by Type:</span>
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="playwright">Playwright</button>
-                <button class="filter-btn" data-filter="html">HTML</button>
-                <button class="filter-btn" data-filter="vitest">Vitest</button>
-                <button class="filter-btn" data-filter="nodejs">Node.js</button>
-                <button class="filter-btn" data-filter="python">Python</button>
-                <div class="search-box">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" id="search" placeholder="Search tests...">
+    <!-- Controls Bar -->
+    <div class="controls-bar">
+        <div class="controls-left">
+            <button class="btn btn-success" onclick="runSelectedTests()" id="run-btn" disabled>
+                ▶️ Run Selected Tests
+            </button>
+            <button class="btn btn-secondary" onclick="stopTests()" id="stop-btn" disabled>
+                ⏹️ Stop
+            </button>
+        </div>
+        <div class="controls-right">
+            <button class="btn btn-primary" onclick="refreshRegistry()">
+                🔄 Refresh Registry
+            </button>
+            <button class="btn btn-secondary" onclick="discoverTests()">
+                🔍 Re-discover Tests
+            </button>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="playwright">Playwright</button>
+        <button class="filter-btn" data-filter="html">HTML</button>
+        <button class="filter-btn" data-filter="vitest">Vitest</button>
+        <button class="filter-btn" data-filter="nodejs">Node.js</button>
+        <button class="filter-btn" data-filter="python">Python</button>
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search" placeholder="Search tests...">
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <!-- Sidebar with Tests -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <span>Test Categories</span>
+                <div class="quick-actions">
+                    <button class="quick-btn" onclick="selectAll()">Select All</button>
+                    <button class="quick-btn" onclick="deselectAll()">Clear</button>
+                    <button class="quick-btn" onclick="expandAll()">Expand All</button>
+                    <button class="quick-btn" onclick="collapseAll()">Collapse All</button>
+                </div>
+            </div>
+            <div class="test-list-container" id="test-list-container">
+                <div class="loading" id="loading">Loading tests...</div>
+                <div class="error" id="error" style="display: none;"></div>
+                <div id="test-categories"></div>
+                <div class="empty-state" id="empty-state" style="display: none;">
+                    <div class="empty-state-icon">🔍</div>
+                    <div>No tests found</div>
                 </div>
             </div>
         </div>
 
-        <div id="loading" class="loading">Loading tests...</div>
-        <div id="error" class="error" style="display: none;"></div>
-        <div id="test-grid" class="test-grid" style="display: none;"></div>
-        <div id="empty-state" class="empty-state" style="display: none;">
-            <div class="empty-state-icon">🔍</div>
-            <div>No tests found matching your criteria</div>
+        <!-- Output Panel -->
+        <div class="output-panel">
+            <div class="output-header">
+                <span class="output-title">📋 Test Output</span>
+                <button class="clear-output" onclick="clearOutput()">Clear</button>
+            </div>
+            <div class="output-content" id="output-content">
+                <div class="output-line info">Ready to run tests...</div>
+            </div>
         </div>
     </div>
 
@@ -472,7 +790,7 @@
                 <!-- Content will be inserted here -->
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" id="run-test-btn">Run Test</button>
+                <button class="btn btn-primary" id="run-single-test-btn">Run This Test</button>
                 <button class="btn btn-secondary" onclick="closeModal()">Close</button>
             </div>
         </div>
@@ -482,6 +800,9 @@
         let testRegistry = {};
         let currentFilter = 'all';
         let currentSearch = '';
+        let selectedTests = new Set();
+        let isRunning = false;
+        let expandedCategories = new Set();
 
         async function loadTests() {
             try {
@@ -492,7 +813,6 @@
                 renderDashboard();
                 
                 document.getElementById('loading').style.display = 'none';
-                document.getElementById('test-grid').style.display = 'grid';
             } catch (error) {
                 console.error('Error loading tests:', error);
                 document.getElementById('loading').style.display = 'none';
@@ -513,8 +833,8 @@
         }
 
         function renderDashboard() {
-            const grid = document.getElementById('test-grid');
-            grid.innerHTML = '';
+            const container = document.getElementById('test-categories');
+            container.innerHTML = '';
             
             let totalTests = 0;
             let categories = 0;
@@ -541,45 +861,264 @@
                 const categoryEl = document.createElement('div');
                 categoryEl.className = 'test-category';
                 
+                const isExpanded = expandedCategories.has(category);
+                
                 categoryEl.innerHTML = `
-                    <div class="category-header" onclick="toggleCategory('${category}')">
-                        <div class="category-title">
-                            📁 ${category}
-                            <span class="category-count">${filteredTests.length}</span>
+                    <div class="category-header ${!isExpanded ? 'collapsed' : ''}" onclick="toggleCategory('${category}')" id="header-${category}">
+                        <div class="category-info">
+                            <div class="category-title">
+                                <span class="expand-icon">▼</span>
+                                📁 ${category}
+                                <span class="category-count">${filteredTests.length}</span>
+                            </div>
+                            ${tests[0]?.directory ? `<div class="category-path">${tests[0].directory}</div>` : ''}
                         </div>
-                        <div class="category-path">${tests[0]?.directory || ''}</div>
+                        <div class="category-controls" onclick="event.stopPropagation();">
+                            <input type="checkbox" 
+                                   id="${category}-select-all" 
+                                   onchange="toggleCategorySelection('${category}')"
+                                   onclick="event.stopPropagation();">
+                            <label for="${category}-select-all" class="select-all-label" onclick="event.stopPropagation();">
+                                Select All
+                            </label>
+                        </div>
                     </div>
-                    <div class="test-list" id="category-${category}">
+                    <div class="test-list ${isExpanded ? 'expanded' : ''}" id="category-${category}">
                         ${filteredTests.map(test => `
-                            <div class="test-item" onclick="showTestDetails('${category}', '${test.file}')">
-                                <div class="test-name">${test.file}</div>
-                                <div class="test-meta">
-                                    <span class="test-type type-${getTestType(test)}">${getTestType(test).toUpperCase()}</span>
-                                    <span>📍 ${test.relativePath || test.file}</span>
+                            <div class="test-item">
+                                <input type="checkbox" 
+                                       id="test-${category}-${test.file}" 
+                                       onchange="toggleTest('${category}', '${test.file}')"
+                                       onclick="event.stopPropagation();"
+                                       ${selectedTests.has(`${category}:${test.file}`) ? 'checked' : ''}>
+                                <div class="test-info" onclick="showTestDetails('${category}', '${test.file}')">
+                                    <div class="test-name" title="${test.file}">${test.file}</div>
+                                    <div class="test-meta">
+                                        <span class="test-type type-${getTestType(test)}">${getTestType(test).toUpperCase()}</span>
+                                        <span class="test-path" title="${test.relativePath || test.file}">${test.relativePath || test.file}</span>
+                                    </div>
                                 </div>
                             </div>
                         `).join('')}
                     </div>
                 `;
                 
-                grid.appendChild(categoryEl);
+                container.appendChild(categoryEl);
             });
             
             // Update stats
             document.getElementById('total-tests').textContent = totalTests;
             document.getElementById('total-categories').textContent = categories;
             document.getElementById('test-types').textContent = testTypes.size;
+            updateSelectedCount();
             
             // Show/hide empty state
             document.getElementById('empty-state').style.display = 
                 totalTests === 0 ? 'block' : 'none';
-            document.getElementById('test-grid').style.display = 
-                totalTests === 0 ? 'none' : 'grid';
         }
 
         function toggleCategory(category) {
+            const header = document.getElementById(`header-${category}`);
             const list = document.getElementById(`category-${category}`);
-            list.classList.toggle('collapsed');
+            
+            if (expandedCategories.has(category)) {
+                expandedCategories.delete(category);
+                header.classList.add('collapsed');
+                list.classList.remove('expanded');
+            } else {
+                expandedCategories.add(category);
+                header.classList.remove('collapsed');
+                list.classList.add('expanded');
+            }
+        }
+
+        function expandAll() {
+            Object.keys(testRegistry).forEach(category => {
+                expandedCategories.add(category);
+            });
+            renderDashboard();
+        }
+
+        function collapseAll() {
+            expandedCategories.clear();
+            renderDashboard();
+        }
+
+        function toggleTest(category, testFile) {
+            const key = `${category}:${testFile}`;
+            if (selectedTests.has(key)) {
+                selectedTests.delete(key);
+            } else {
+                selectedTests.add(key);
+            }
+            updateSelectedCount();
+            updateCategoryCheckbox(category);
+        }
+
+        function toggleCategorySelection(category) {
+            const checkbox = document.getElementById(`${category}-select-all`);
+            const tests = testRegistry[category] || [];
+            
+            if (checkbox.checked) {
+                tests.forEach(test => {
+                    selectedTests.add(`${category}:${test.file}`);
+                    const testCheckbox = document.getElementById(`test-${category}-${test.file}`);
+                    if (testCheckbox) testCheckbox.checked = true;
+                });
+            } else {
+                tests.forEach(test => {
+                    selectedTests.delete(`${category}:${test.file}`);
+                    const testCheckbox = document.getElementById(`test-${category}-${test.file}`);
+                    if (testCheckbox) testCheckbox.checked = false;
+                });
+            }
+            updateSelectedCount();
+        }
+
+        function updateCategoryCheckbox(category) {
+            const tests = testRegistry[category] || [];
+            const selectedCount = tests.filter(test => 
+                selectedTests.has(`${category}:${test.file}`)
+            ).length;
+            
+            const checkbox = document.getElementById(`${category}-select-all`);
+            if (checkbox) {
+                checkbox.checked = selectedCount === tests.length && tests.length > 0;
+                checkbox.indeterminate = selectedCount > 0 && selectedCount < tests.length;
+            }
+        }
+
+        function updateSelectedCount() {
+            document.getElementById('selected-tests').textContent = selectedTests.size;
+            document.getElementById('run-btn').disabled = selectedTests.size === 0 || isRunning;
+        }
+
+        function selectAll() {
+            Object.entries(testRegistry).forEach(([category, tests]) => {
+                tests.forEach(test => {
+                    const key = `${category}:${test.file}`;
+                    selectedTests.add(key);
+                    const checkbox = document.getElementById(`test-${category}-${test.file}`);
+                    if (checkbox) checkbox.checked = true;
+                });
+                const categoryCheckbox = document.getElementById(`${category}-select-all`);
+                if (categoryCheckbox) categoryCheckbox.checked = true;
+            });
+            updateSelectedCount();
+        }
+
+        function deselectAll() {
+            selectedTests.clear();
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.checked = false;
+                cb.indeterminate = false;
+            });
+            updateSelectedCount();
+        }
+
+        async function refreshRegistry() {
+            log('Refreshing test registry...', 'info');
+            await loadTests();
+            log('Test registry refreshed', 'success');
+        }
+
+        async function discoverTests() {
+            log('Running test discovery...', 'info');
+            try {
+                const response = await fetch('/api/refresh', { method: 'POST' });
+                const result = await response.json();
+                if (response.ok) {
+                    log('Test discovery completed', 'success');
+                    await loadTests();
+                } else {
+                    log(`Discovery failed: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                log(`Discovery error: ${error.message}`, 'error');
+            }
+        }
+
+        async function runSelectedTests() {
+            if (selectedTests.size === 0) {
+                log('No tests selected', 'warning');
+                return;
+            }
+            
+            isRunning = true;
+            document.getElementById('run-btn').disabled = true;
+            document.getElementById('stop-btn').disabled = false;
+            log(`Running ${selectedTests.size} selected tests...`, 'info');
+            
+            let passed = 0;
+            let failed = 0;
+            
+            for (const testKey of selectedTests) {
+                if (!isRunning) {
+                    log('Test run stopped by user', 'warning');
+                    break;
+                }
+                
+                const [category, testFile] = testKey.split(':');
+                const test = testRegistry[category]?.find(t => t.file === testFile);
+                if (!test) continue;
+                
+                log(`Running: ${test.file}`, 'info');
+                
+                try {
+                    const response = await fetch('/api/run-test', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ path: test.relativePath || test.file })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success || response.ok) {
+                        passed++;
+                        log(`✓ ${test.file} passed`, 'success');
+                        if (result.output) {
+                            log(result.output.substring(0, 200), 'info');
+                        }
+                    } else {
+                        failed++;
+                        log(`✗ ${test.file} failed`, 'error');
+                        if (result.error || result.output) {
+                            log(result.error || result.output, 'error');
+                        }
+                    }
+                } catch (error) {
+                    failed++;
+                    log(`✗ ${test.file}: ${error.message}`, 'error');
+                }
+            }
+            
+            log(`Test run complete: ${passed} passed, ${failed} failed`, 
+                failed === 0 ? 'success' : 'warning');
+            
+            isRunning = false;
+            document.getElementById('run-btn').disabled = selectedTests.size === 0;
+            document.getElementById('stop-btn').disabled = true;
+        }
+
+        function stopTests() {
+            isRunning = false;
+            document.getElementById('stop-btn').disabled = true;
+            log('Stopping test run...', 'warning');
+        }
+
+        function log(message, type = 'info') {
+            const content = document.getElementById('output-content');
+            
+            const line = document.createElement('div');
+            line.className = `output-line ${type}`;
+            line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            
+            content.appendChild(line);
+            content.scrollTop = content.scrollHeight;
+        }
+
+        function clearOutput() {
+            document.getElementById('output-content').innerHTML = '<div class="output-line info">Ready to run tests...</div>';
         }
 
         async function showTestDetails(category, testFile) {
@@ -589,7 +1128,7 @@
             const modal = document.getElementById('test-modal');
             const modalTitle = document.getElementById('modal-title');
             const modalBody = document.getElementById('modal-body');
-            const runBtn = document.getElementById('run-test-btn');
+            const runBtn = document.getElementById('run-single-test-btn');
             
             modalTitle.textContent = test.file;
             modalBody.innerHTML = '<div class="loading">Loading test content...</div>';
@@ -606,18 +1145,14 @@
                 `;
                 
                 // Setup run button
-                runBtn.onclick = () => runTest(test);
+                runBtn.onclick = () => runSingleTest(test);
             } catch (error) {
                 modalBody.innerHTML = `<div class="error">Failed to load test content: ${error.message}</div>`;
             }
         }
 
-        function closeModal() {
-            document.getElementById('test-modal').classList.remove('active');
-        }
-
-        async function runTest(test) {
-            const runBtn = document.getElementById('run-test-btn');
+        async function runSingleTest(test) {
+            const runBtn = document.getElementById('run-single-test-btn');
             runBtn.disabled = true;
             runBtn.textContent = 'Running...';
             
@@ -638,12 +1173,20 @@
                         <div class="file-content-code">${escapeHtml(result.output || result.error || 'Test completed')}</div>
                     </div>
                 `;
+                
+                log(`Ran ${test.file}: ${result.success ? 'passed' : 'failed'}`, 
+                    result.success ? 'success' : 'error');
             } catch (error) {
                 alert(`Failed to run test: ${error.message}`);
+                log(`Failed to run ${test.file}: ${error.message}`, 'error');
             } finally {
                 runBtn.disabled = false;
-                runBtn.textContent = 'Run Test';
+                runBtn.textContent = 'Run This Test';
             }
+        }
+
+        function closeModal() {
+            document.getElementById('test-modal').classList.remove('active');
         }
 
         function escapeHtml(text) {
@@ -674,6 +1217,9 @@
                 closeModal();
             }
         });
+
+        // Initial log message
+        log('Dashboard initialized. Ready to run tests.', 'info');
 
         // Load tests on page load
         loadTests();

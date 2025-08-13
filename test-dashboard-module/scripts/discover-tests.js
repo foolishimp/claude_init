@@ -57,26 +57,33 @@ const VALID_EXTENSIONS = [
 ];
 
 class TestDiscovery {
-    constructor() {
+    constructor(projectDirs = []) {
         this.tests = {};
-        this.rootDir = process.cwd();
+        // Support multiple project directories or default to current directory
+        this.projectDirs = projectDirs.length > 0 ? projectDirs : [process.cwd()];
     }
 
     async discover() {
-        console.log(`🔍 Discovering tests in: ${this.rootDir}`);
-        await this.scanDirectory(this.rootDir);
+        console.log(`🔍 Discovering tests in ${this.projectDirs.length} project(s)`);
+        
+        for (const dir of this.projectDirs) {
+            console.log(`  📂 Scanning: ${dir}`);
+            await this.scanDirectory(dir, dir);
+        }
+        
         return this.tests;
     }
 
-    async scanDirectory(dir, depth = 0, maxDepth = 10) {
+    async scanDirectory(dir, rootDir = null, depth = 0, maxDepth = 10) {
         if (depth > maxDepth) return;
+        const projectRoot = rootDir || dir;
 
         try {
             const entries = await fs.readdir(dir, { withFileTypes: true });
 
             for (const entry of entries) {
                 const fullPath = path.join(dir, entry.name);
-                const relativePath = path.relative(this.rootDir, fullPath);
+                const relativePath = path.relative(projectRoot, fullPath);
 
                 if (entry.isDirectory()) {
                     // Skip ignored directories
@@ -84,11 +91,11 @@ class TestDiscovery {
                     if (entry.name.startsWith('.')) continue;
 
                     // Recursively scan
-                    await this.scanDirectory(fullPath, depth + 1, maxDepth);
+                    await this.scanDirectory(fullPath, projectRoot, depth + 1, maxDepth);
                 } else if (entry.isFile()) {
                     // Check if it's a test file
                     if (this.isTestFile(entry.name)) {
-                        this.addTest(fullPath, relativePath);
+                        this.addTest(fullPath, relativePath, projectRoot);
                     }
                 }
             }
@@ -110,10 +117,10 @@ class TestDiscovery {
         return TEST_PATTERNS.files.some(pattern => pattern.test(filename));
     }
 
-    addTest(fullPath, relativePath) {
+    addTest(fullPath, relativePath, projectRoot) {
         const dir = path.dirname(relativePath);
         const filename = path.basename(relativePath);
-        const category = this.categorizeTest(dir);
+        const category = this.categorizeTest(dir, projectRoot);
 
         if (!this.tests[category]) {
             this.tests[category] = [];
@@ -123,37 +130,42 @@ class TestDiscovery {
             file: filename,
             relativePath: relativePath,
             directory: dir,
-            fullPath: fullPath
+            fullPath: fullPath,
+            projectRoot: projectRoot
         });
     }
 
-    categorizeTest(dir) {
+    categorizeTest(dir, projectRoot) {
         const parts = dir.split(path.sep);
         
+        // Add project name as prefix if we have multiple projects
+        const projectName = this.projectDirs.length > 1 ? path.basename(projectRoot) : '';
+        const prefix = projectName ? `[${projectName}] ` : '';
+        
         // If in root, return 'root'
-        if (dir === '.' || dir === '') return 'Root Tests';
+        if (dir === '.' || dir === '') return `${prefix}Root Tests`;
         
         // If in a test directory, use parent + test dir
         for (const testDir of TEST_PATTERNS.directories) {
             if (parts.includes(testDir)) {
                 const testDirIndex = parts.indexOf(testDir);
                 if (testDirIndex > 0) {
-                    return parts.slice(0, testDirIndex + 1).join('/');
+                    return prefix + parts.slice(0, testDirIndex + 1).join('/');
                 }
-                return testDir;
+                return prefix + testDir;
             }
         }
         
         // Otherwise use the immediate directory
         if (parts.length > 2) {
-            return parts.slice(0, 2).join('/');
+            return prefix + parts.slice(0, 2).join('/');
         }
         
-        return parts.join('/');
+        return prefix + parts.join('/');
     }
 
-    async saveRegistry() {
-        const outputPath = path.join(this.rootDir, 'test-registry.json');
+    async saveRegistry(outputDir = null) {
+        const outputPath = path.join(outputDir || process.cwd(), 'test-registry.json');
         
         // Sort tests within each category
         for (const category in this.tests) {
@@ -189,11 +201,49 @@ class TestDiscovery {
 
 // Main execution
 async function main() {
-    const discovery = new TestDiscovery();
+    // Parse command line arguments
+    const args = process.argv.slice(2);
+    let projectDirs = [];
+    let outputDir = process.cwd();
+    
+    // Parse arguments
+    for (let i = 0; i < args.length; i++) {
+        if (args[i] === '--output' || args[i] === '-o') {
+            outputDir = args[++i];
+        } else if (args[i] === '--help' || args[i] === '-h') {
+            console.log(`
+Test Discovery Script
+
+Usage: node discover-tests.js [options] [project-dirs...]
+
+Options:
+  -o, --output <dir>  Output directory for test-registry.json (default: current dir)
+  -h, --help         Show this help message
+
+Examples:
+  # Discover tests in current directory
+  node discover-tests.js
+
+  # Discover tests in specific project
+  node discover-tests.js /path/to/project
+
+  # Discover tests in multiple projects
+  node discover-tests.js /project1 /project2 /project3
+
+  # Specify output directory
+  node discover-tests.js -o ./dashboard /path/to/project
+`);
+            process.exit(0);
+        } else if (!args[i].startsWith('-')) {
+            projectDirs.push(args[i]);
+        }
+    }
+    
+    const discovery = new TestDiscovery(projectDirs);
     
     try {
         await discovery.discover();
-        const registryPath = await discovery.saveRegistry();
+        const registryPath = await discovery.saveRegistry(outputDir);
         discovery.printSummary();
         console.log(`\n💾 Test registry saved to: ${registryPath}`);
     } catch (error) {
