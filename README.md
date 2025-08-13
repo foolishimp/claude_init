@@ -7,14 +7,16 @@ A structured methodology for AI-assisted software development using Claude Code 
 Install the Claude task management system in any project:
 
 ```bash
-# Clone this repository
-git clone https://github.com/foolishimp/claude_init.git
+# Method 1: Download and run (Recommended - no git history)
+curl -O https://raw.githubusercontent.com/foolishimp/claude_init/main/setup_claude_tasks.py
+python setup_claude_tasks.py
+rm setup_claude_tasks.py  # Optional: remove installer after use
 
-# Run setup in your project
-python claude_init/setup_claude_tasks.py
-
-# Or install from GitHub directly
+# Method 2: One-liner pipe to Python
 curl -sSL https://raw.githubusercontent.com/foolishimp/claude_init/main/setup_claude_tasks.py | python3
+
+# Method 3: Install from GitHub repository
+python setup_claude_tasks.py --source https://github.com/foolishimp/claude_init
 ```
 
 ## 📋 What This Provides

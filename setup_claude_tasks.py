@@ -168,10 +168,14 @@ class ClaudeTasksSetup:
                 temp_dir = tempfile.mkdtemp()
                 print(f"📥 Cloning from: {self.source}")
                 subprocess.run(
-                    ["git", "clone", self.source, temp_dir],
+                    ["git", "clone", "--depth", "1", self.source, temp_dir],
                     check=True,
                     capture_output=True
                 )
+                # Remove .git folder to avoid confusion
+                git_dir = Path(temp_dir) / ".git"
+                if git_dir.exists():
+                    shutil.rmtree(git_dir)
                 source_path = Path(temp_dir) / "claude_tasks"
             else:
                 # Local path
