@@ -82,7 +82,67 @@ python setup_claude_tasks.py --source /path/to/claude_init --target ./myproject
 - `--force` - Overwrite existing files
 - `--no-git` - Skip .gitignore updates
 
-## 📚 Workflow
+## 🆕 Starting a Fresh Project
+
+### Complete Setup Guide
+
+1. **Create Your Project**
+```bash
+mkdir my-project && cd my-project
+git init  # Optional but recommended
+```
+
+2. **Install Claude Task Management**
+```bash
+curl -O https://raw.githubusercontent.com/foolishimp/claude_init/main/setup_claude_tasks.py
+python setup_claude_tasks.py
+rm setup_claude_tasks.py
+```
+
+3. **Customize CLAUDE.md**
+Edit the TODO sections with your project details:
+- Repository overview
+- Project structure
+- Development commands
+- Project-specific guidelines
+
+4. **Create Your First Task**
+Edit `claude_tasks/active/ACTIVE_TASKS.md`:
+```markdown
+### Task 1: Initialize Project
+- **Priority**: High
+- **Status**: Not Started
+- **Description**: Set up project with testing
+- **Acceptance Criteria**:
+  - [ ] Tests configured
+  - [ ] First test passing
+  - [ ] Project structure defined
+```
+
+5. **Start with TDD**
+```bash
+# Write failing test (RED)
+# Write code to pass (GREEN)
+# Refactor (REFACTOR)
+# Document in finished/ when complete
+```
+
+6. **Complete and Commit**
+```bash
+# Move task to finished/
+mv task-notes claude_tasks/finished/$(date +%Y%m%d_%H%M)_task_name.md
+
+# Commit with standard message
+git add .
+git commit -m "Task #1: Initialize project
+
+Description of what was done.
+
+Tests: X unit | Coverage: XX%
+TDD: RED → GREEN → REFACTOR"
+```
+
+## 📚 Daily Workflow
 
 1. **Start Session**: Review `claude_tasks/SESSION_STARTER.md`
 2. **Check Tasks**: Read `claude_tasks/active/ACTIVE_TASKS.md`
