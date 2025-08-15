@@ -1,0 +1,3 @@
+[submodule "claude_init"]
+	path = claude_init
+	url = https://github.com/foolishimp/claude_init.git
